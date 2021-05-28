@@ -91,6 +91,7 @@ def test_hand_rank():
         HandRank.FLUSH: ['2h, 7h, Th, Jh, Ah', '2d, 3d, 4d, 5d, 7d', 'Ah, 3h, Jh, 5h, Qh'],
         HandRank.FULL_HOUSE: ['6c, 6s, 5c, 5d, 6h', '2h, as, 2c, Ad, 2d', 'Jh, 3s, Jc, 3d, Js'],
         HandRank.FOUR_OF_A_KIND: ['5h, 5s, 5c, 5d, 6h', '2h, as, ac, Ad, ah', 'jh, js, Jc, 5d, Jd'],
+        HandRank.STRAIGHT_FLUSH: ['2h, 3h, 4h, 5h, 6h', '3c, 2c, ac, 5c, 4c', 'Jd, Td, Qd, Ad, Kd']
     }
     for rank, tcs in test_cases.items():
         for tc in tcs:
