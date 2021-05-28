@@ -1,6 +1,6 @@
 import pytest
 
-from poker_hands import Card, Suit, FaceRank, parse_card, Hand, parse_hand
+from poker_hands import Card, Suit, FaceRank, parse_card, Hand, parse_hand, HandRank
 
 
 def test_initialize_card():
@@ -79,3 +79,17 @@ def test_parse_hand_from_str():
         Card(rank=14, suit=Suit.HEARTS)
     }
     assert expected_cards == set(hand.cards)
+
+
+def test_hand_rank():
+    # High card
+    hand = parse_hand('2h, 7s, Tc, Jd, Ah')
+    assert hand.rank == HandRank.HIGH_CARD
+
+    # Pair
+    hand = parse_hand('2h, 3s, 5c, 5d, 6h')
+    assert hand.rank == HandRank.PAIR
+    hand = parse_hand('2h, as, 5c, Ad, 6h')
+    assert hand.rank == HandRank.PAIR
+    hand = parse_hand('2h, 3s, Jc, 5d, Jh')
+    assert hand.rank == HandRank.PAIR
