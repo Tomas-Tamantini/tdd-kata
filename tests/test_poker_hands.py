@@ -25,4 +25,15 @@ def test_ace_can_be_1_or_14():
 
 def test_parse_card_from_str():
     c = parse_card('5h')
-    assert c.rank == 5
+    assert c.rank == 5 and c.suit == Suit.HEARTS
+
+    c = parse_card(' Ac ')
+    assert c.rank == FaceRank.ACE and c.suit == Suit.CLUBS
+
+    c = parse_card(' jd ')
+    assert c.rank == FaceRank.JACK and c.suit == Suit.DIAMONDS
+
+    with    pytest.raises(ValueError):
+        parse_card('1d')
+    with pytest.raises(ValueError):
+        parse_card('2p')
