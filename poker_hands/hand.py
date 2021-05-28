@@ -40,4 +40,17 @@ class Hand:
                 if card_ranks.count(r) == 3:
                     return HandRank.THREE_OF_A_KIND
             return HandRank.TWO_PAIRS
+        if Hand.__are_in_sequence(card_ranks):
+            return HandRank.STRAIGHT
         return HandRank.HIGH_CARD
+
+    @staticmethod
+    def __are_in_sequence(ranks: List[int]) -> bool:
+        """Check if 5 cards ranks are in sequence"""
+        ranks.sort()
+        if ranks == [2, 3, 4, 5, 14]:
+            return True  # Sequence from ace to 5
+        for i in range(1, len(ranks)):
+            if ranks[i] - ranks[i - 1] != 1:
+                return False
+        return True
