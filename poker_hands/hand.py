@@ -40,6 +40,9 @@ class Hand:
                 if card_ranks.count(r) == 3:
                     return HandRank.THREE_OF_A_KIND
             return HandRank.TWO_PAIRS
+        card_suits = [c.suit for c in self.cards]
+        if len(set(card_suits)) == 1:
+            return HandRank.FLUSH
         if Hand.__are_in_sequence(card_ranks):
             return HandRank.STRAIGHT
         return HandRank.HIGH_CARD
