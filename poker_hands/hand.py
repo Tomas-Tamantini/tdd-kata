@@ -41,11 +41,10 @@ class Hand:
         if num_different_ranks == 2:
             return HandRank.FULL_HOUSE if highest_rank_count == 3 else HandRank.FOUR_OF_A_KIND
         card_suits = [c.suit for c in self.cards]
-        if len(set(card_suits)) == 1:
-            return HandRank.FLUSH
+        is_flush = len(set(card_suits)) == 1
         if Hand.__are_in_sequence(card_ranks):
-            return HandRank.STRAIGHT
-        return HandRank.HIGH_CARD
+            return HandRank.STRAIGHT_FLUSH if is_flush else HandRank.STRAIGHT
+        return HandRank.FLUSH if is_flush else HandRank.HIGH_CARD
 
     @staticmethod
     def __are_in_sequence(ranks: List[int]) -> bool:
