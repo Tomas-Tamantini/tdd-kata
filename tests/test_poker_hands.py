@@ -88,6 +88,7 @@ def test_hand_rank():
         HandRank.TWO_PAIRS: ['6s, 3s, 5c, 5d, 6h', '2h, as, 2c, Ad, 6h', '2h, 3s, Jc, 3d, Jh'],
         HandRank.THREE_OF_A_KIND: ['5h, 3s, 5c, 5d, 6h', '2h, as, 5c, Ad, ah', '2h, js, Jc, 5d, Jh'],
         HandRank.STRAIGHT: ['2h, 3s, 4c, 5d, 6h', '3h, 2s, ac, 5d, 4h', 'Jh, Th, Qh, Ah, Kc'],
+        HandRank.FLUSH: ['2h, 7h, Th, Jh, Ah', '2d, 3d, 4d, 5d, 7d', 'Ah, 3h, Jh, 5h, Qh'],
     }
     for rank, tcs in test_cases.items():
         for tc in tcs:
