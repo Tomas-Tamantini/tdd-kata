@@ -1,10 +1,23 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
 from poker_hands import Card
 
 
-@dataclass
+class HandRank(int, Enum):
+    HIGH_CARD = 1
+    PAIR = 2
+    TWO_PAIRS = 3
+    THREE_OF_A_KIND = 4
+    STRAIGHT = 5
+    FLUSH = 6
+    FULL_HOUSE = 7
+    FOUR_OF_A_KIND = 8
+    STRAIGHT_FLUSH = 9
+
+
+@dataclass(frozen=True)
 class Hand:
     cards: List[Card]
 
@@ -15,3 +28,10 @@ class Hand:
         # Check if all 5 cards are unique
         if len(set(self.cards)) != num_cards:
             raise ValueError('Every card must be unique')
+
+    @property
+    def rank(self) -> HandRank:
+        card_ranks = [c.rank for c in self.cards]
+        if len(card_ranks) != len(set(card_ranks)):
+            return HandRank.PAIR
+        return HandRank.HIGH_CARD
