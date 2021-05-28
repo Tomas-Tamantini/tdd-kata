@@ -24,3 +24,5 @@ class Card:
     def __post_init__(self):
         if self.rank < 1 or self.rank > 14:
             raise ValueError('Invalid rank (must be a number between 1 and 14)')
+        if self.rank == 1:
+            self.rank = FaceRank.ACE
