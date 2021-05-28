@@ -36,5 +36,8 @@ class Hand:
         if set_size == 4:
             return HandRank.PAIR
         if set_size == 3:
+            for r in card_ranks:
+                if card_ranks.count(r) == 3:
+                    return HandRank.THREE_OF_A_KIND
             return HandRank.TWO_PAIRS
         return HandRank.HIGH_CARD
