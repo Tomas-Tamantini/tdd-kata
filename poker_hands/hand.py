@@ -32,16 +32,14 @@ class Hand:
     @property
     def rank(self) -> HandRank:
         card_ranks = [c.rank for c in self.cards]
+        highest_rank_count = max([card_ranks.count(r) for r in card_ranks])
         num_different_ranks = len(set(card_ranks))
         if num_different_ranks == 4:
             return HandRank.PAIR
         if num_different_ranks == 3:
-            for r in card_ranks:
-                if card_ranks.count(r) == 3:
-                    return HandRank.THREE_OF_A_KIND
-            return HandRank.TWO_PAIRS
+            return HandRank.THREE_OF_A_KIND if highest_rank_count == 3 else HandRank.TWO_PAIRS
         if num_different_ranks == 2:
-            return HandRank.FULL_HOUSE
+            return HandRank.FULL_HOUSE if highest_rank_count == 3 else HandRank.FOUR_OF_A_KIND
         card_suits = [c.suit for c in self.cards]
         if len(set(card_suits)) == 1:
             return HandRank.FLUSH
