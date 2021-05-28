@@ -1,6 +1,6 @@
 import pytest
 
-from poker_hands.card import Card, Suit, FaceRank
+from poker_hands import Card, Suit, FaceRank
 
 
 def test_initialize_card():
@@ -15,3 +15,9 @@ def test_initialize_card():
         Card(rank=-3, suit=Suit.HEARTS)
 
 
+def test_ace_can_be_1_or_14():
+    c = Card(rank=14, suit=Suit.SPADES)
+    assert c.rank == FaceRank.ACE
+
+    c = Card(rank=1, suit=Suit.DIAMONDS)
+    assert c.rank == FaceRank.ACE
