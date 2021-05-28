@@ -36,9 +36,9 @@ class Card:
         if self.rank == 1:
             self.rank = FaceRank.ACE
 
+    def __hash__(self):
+        return hash((self.rank, self.suit))
+
     def __str__(self):
         rank_str = str(self.rank) if self.rank < 10 else RANK_REPR[self.rank]
         return rank_str + self.suit
-
-    def __eq__(self, other: "Card"):
-        return self.rank == other.rank and self.suit == other.suit
