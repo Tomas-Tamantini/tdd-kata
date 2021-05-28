@@ -1,6 +1,6 @@
 import pytest
 
-from poker_hands import Card, Suit, FaceRank, parse_card
+from poker_hands import Card, Suit, FaceRank, parse_card, Hand
 
 
 def test_initialize_card():
@@ -33,7 +33,27 @@ def test_parse_card_from_str():
     c = parse_card(' jd ')
     assert c.rank == FaceRank.JACK and c.suit == Suit.DIAMONDS
 
-    with    pytest.raises(ValueError):
+    with pytest.raises(ValueError):
         parse_card('1d')
     with pytest.raises(ValueError):
         parse_card('2p')
+
+
+def test_initialize_poker_hand():
+    # Valid initializations - 5 unique cards
+    Hand(cards=[
+        Card(rank=5, suit=Suit.CLUBS),
+        Card(rank=FaceRank.JACK, suit=Suit.CLUBS),
+        Card(rank=FaceRank.JACK, suit=Suit.SPADES),
+        Card(rank=1, suit=Suit.HEARTS),
+        Card(rank=14, suit=Suit.DIAMONDS),
+    ])
+
+    # Invalid initializations
+    with pytest.raises(ValueError):
+        # Less than 5 cards
+        Hand(cards=[])
+
+    with pytest.raises(ValueError):
+        # Less than 5 cards
+        Hand(cards=[Card(rank=5, suit=Suit.CLUBS), Card(rank=FaceRank.JACK, suit=Suit.CLUBS), ])
