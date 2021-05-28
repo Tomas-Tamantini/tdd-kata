@@ -57,3 +57,13 @@ def test_initialize_poker_hand():
     with pytest.raises(ValueError):
         # Less than 5 cards
         Hand(cards=[Card(rank=5, suit=Suit.CLUBS), Card(rank=FaceRank.JACK, suit=Suit.CLUBS), ])
+
+    with pytest.raises(ValueError):
+        # Cards are not all unique (ace of hearts appears twice)
+        Hand(cards=[
+            Card(rank=5, suit=Suit.CLUBS),
+            Card(rank=FaceRank.JACK, suit=Suit.CLUBS),
+            Card(rank=FaceRank.JACK, suit=Suit.SPADES),
+            Card(rank=1, suit=Suit.HEARTS),
+            Card(rank=14, suit=Suit.HEARTS),
+        ])
