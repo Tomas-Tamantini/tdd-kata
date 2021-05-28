@@ -32,6 +32,9 @@ class Hand:
     @property
     def rank(self) -> HandRank:
         card_ranks = [c.rank for c in self.cards]
-        if len(card_ranks) != len(set(card_ranks)):
+        set_size = len(set(card_ranks))
+        if set_size == 4:
             return HandRank.PAIR
+        if set_size == 3:
+            return HandRank.TWO_PAIRS
         return HandRank.HIGH_CARD
