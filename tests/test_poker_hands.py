@@ -1,6 +1,6 @@
 import pytest
 
-from poker_hands import Card, Suit, FaceRank
+from poker_hands import Card, Suit, FaceRank, parse_card
 
 
 def test_initialize_card():
@@ -21,3 +21,8 @@ def test_ace_can_be_1_or_14():
 
     c = Card(rank=1, suit=Suit.DIAMONDS)
     assert c.rank == FaceRank.ACE
+
+
+def test_parse_card_from_str():
+    c = parse_card('5h')
+    assert c.rank == 5
