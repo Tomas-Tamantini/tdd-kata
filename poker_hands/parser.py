@@ -1,14 +1,17 @@
-from poker_hands import Card, Suit, FaceRank
+from poker_hands import Card, Suit
+from poker_hands.card import RANK_REPR
 
 
 def parse_card(str_format: str) -> Card:
-    stripped_and_lower = str_format.strip().lower()
-    return Card(rank=_parse_rank(stripped_and_lower[0]), suit=_parse_suit(stripped_and_lower[1]))
+    stripped = str_format.strip()
+    return Card(rank=_parse_rank(stripped[0]), suit=Suit(stripped[1].lower()))
 
 
 def _parse_rank(c: chr) -> int:
-    return 5
-
-
-def _parse_suit(c: chr) -> Suit:
-    return Suit.HEARTS
+    u = c.upper()
+    for rank, rank_repr in RANK_REPR.items():
+        if u == rank_repr:
+            return rank
+    if ord('2') <= ord(c) <= ord('9'):
+        return int(c)
+    raise ValueError('Invalid rank. Must be 2-9, or T, J, Q, K, A.')
