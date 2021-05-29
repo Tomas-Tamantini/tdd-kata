@@ -99,22 +99,21 @@ def test_hand_rank():
             assert hand.rank == rank
 
 
+def test_showdown_invalid_hands():
+    # Invalid cases: The two hands share some of the same cards
+    my_hand = parse_hand('2s, 7s, Tc, Jd, Ah')
+    their_hand = parse_hand('3h, 2s, ah, 5d, 4h')
+    with pytest.raises(ValueError):
+        my_hand.showdown_result(their_hand)
+
+
 def test_showdown_valid_hands():
     # List of tuples, each with (my hand, their hand, showdown result)
     test_cases = [
-        ('2h, 7s, Tc, Jd, Ah', '3h, 2s, ac, 5d, 4h', ShowdownResult.LOSS)
+        ('2c, 7s, Tc, Jd, Ah', '3s, 2s, ac, 5d, 4h', ShowdownResult.LOSS),
+        ('3s, 2s, ac, 5d, 4h', '2c, 7s, Tc, Jd, Ah', ShowdownResult.WIN),
+        ('3d, 2s, ac, 5d, 4h', '3c, 2d, ah, 5s, 4c', ShowdownResult.TIE),
     ]
     for mine, theirs, result in test_cases:
         my_hand, their_hand = parse_hand(mine), parse_hand(theirs)
         assert my_hand.showdown_result(their_hand) == result
-
-
-def test_showdown_invalid_hands():
-    # Invalid cases: The two hands share some of the same cards
-    test_cases = [
-        ('2h, 7s, Tc, Jd, Ah', '3h, 2s, ah, 5d, 4h')
-    ]
-    for mine, theirs in test_cases:
-        my_hand, their_hand = parse_hand(mine), parse_hand(theirs)
-        with pytest.raises(ValueError):
-            my_hand.showdown_result(their_hand)
