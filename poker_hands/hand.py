@@ -24,19 +24,25 @@ class ShowdownResult(int, Enum):
     WIN = 1
 
 
-@dataclass(frozen=True)
+@dataclass
 class Hand:
     cards: List[Card]
 
     def __post_init__(self):
+        # Validations
         num_cards = len(self.cards)
         if num_cards != 5:
             raise ValueError('A poker hand must have 5 cards')
         if not cards_are_unique(self.cards):
             raise ValueError('Every card must be unique')
+        # Set rank
+        self._rank = self._get_rank()
 
     @property
-    def rank(self) -> HandRank:
+    def rank(self):
+        return self._rank
+
+    def _get_rank(self) -> HandRank:
         card_ranks = [c.rank for c in self.cards]
         highest_rank_count = max([card_ranks.count(r) for r in card_ranks])
         num_different_ranks = len(set(card_ranks))
@@ -56,11 +62,9 @@ class Hand:
         # Check if every card is unique
         if not cards_are_unique(self.cards + other.cards):
             raise ValueError('Every card must be unique')
-
-        my_rank, other_rank = self.rank, other.rank
-        if my_rank > other_rank:
+        if self.rank > other.rank:
             return ShowdownResult.WIN
-        elif my_rank < other_rank:
+        elif self.rank < other.rank:
             return ShowdownResult.LOSS
         return ShowdownResult.TIE
 
