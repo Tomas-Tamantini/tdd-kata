@@ -17,6 +17,12 @@ class HandRank(int, Enum):
     STRAIGHT_FLUSH = 9
 
 
+class ShowdownResult(int, Enum):
+    LOSS = -1
+    TIE = 0
+    WIN = 1
+
+
 @dataclass(frozen=True)
 class Hand:
     cards: List[Card]
@@ -45,6 +51,13 @@ class Hand:
         if Hand.__are_in_sequence(card_ranks):
             return HandRank.STRAIGHT_FLUSH if is_flush else HandRank.STRAIGHT
         return HandRank.FLUSH if is_flush else HandRank.HIGH_CARD
+
+    def showdown_result(self, other: "Hand") -> ShowdownResult:
+        # Check if every card is unique
+        all_cards = set.union(set(self.cards), set(other.cards))
+        if len(all_cards) < len(self.cards) + len(other.cards):
+            raise ValueError('Every card must be unique')
+        return ShowdownResult.LOSS
 
     @staticmethod
     def __are_in_sequence(ranks: List[int]) -> bool:
