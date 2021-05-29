@@ -3,6 +3,7 @@ from enum import Enum
 from typing import List
 
 from poker_hands import Card
+from poker_hands.poker_utils import cards_are_unique
 
 
 class HandRank(int, Enum):
@@ -31,8 +32,7 @@ class Hand:
         num_cards = len(self.cards)
         if num_cards != 5:
             raise ValueError('A poker hand must have 5 cards')
-        # Check if all 5 cards are unique
-        if len(set(self.cards)) != num_cards:
+        if not cards_are_unique(self.cards):
             raise ValueError('Every card must be unique')
 
     @property
@@ -54,10 +54,15 @@ class Hand:
 
     def showdown_result(self, other: "Hand") -> ShowdownResult:
         # Check if every card is unique
-        all_cards = set.union(set(self.cards), set(other.cards))
-        if len(all_cards) < len(self.cards) + len(other.cards):
+        if not cards_are_unique(self.cards + other.cards):
             raise ValueError('Every card must be unique')
-        return ShowdownResult.LOSS
+
+        my_rank, other_rank = self.rank, other.rank
+        if my_rank > other_rank:
+            return ShowdownResult.WIN
+        elif my_rank < other_rank:
+            return ShowdownResult.LOSS
+        return ShowdownResult.TIE
 
     @staticmethod
     def __are_in_sequence(ranks: List[int]) -> bool:
