@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import List, Dict, Tuple
 
-from poker_hands import Card
+from poker_hands import Card, FaceRank
 from poker_hands.poker_utils import cards_are_unique
 
 
@@ -73,6 +73,12 @@ class Hand:
             return ShowdownResult.WIN
         elif self.rank < other.rank:
             return ShowdownResult.LOSS
+
+        # Check straight/straight flush separately because of A-5 possibility:
+        if self.rank == HandRank.STRAIGHT or self.rank == HandRank.STRAIGHT_FLUSH:
+            return self._showdown_straight_result(other)
+
+        # Check every other case
         for i in reversed(range(len(self._sorted_card_ranks))):
             if self._sorted_card_ranks[i] > other._sorted_card_ranks[i]:
                 return ShowdownResult.WIN
@@ -81,12 +87,12 @@ class Hand:
         return ShowdownResult.TIE
 
     @staticmethod
-    def __are_in_sequence(ranks: Tuple[int, ...]) -> bool:
+    def __are_in_sequence(sorted_card_ranks: Tuple[int, ...]) -> bool:
         """Check if 5 cards ranks are in sequence"""
-        if ranks == (2, 3, 4, 5, 14):
+        if sorted_card_ranks == (2, 3, 4, 5, 14):
             return True  # Sequence from ace to 5
-        for i in range(1, len(ranks)):
-            if ranks[i] - ranks[i - 1] != 1:
+        for i in range(1, len(sorted_card_ranks)):
+            if sorted_card_ranks[i] - sorted_card_ranks[i - 1] != 1:
                 return False
         return True
 
@@ -110,3 +116,19 @@ class Hand:
         sorted_tuples = [(frequency, rank) for rank, frequency in rank_frequency.items()]
         sorted_tuples.sort()
         return tuple(r for _, r in sorted_tuples)
+
+    @staticmethod
+    def _straight_highest_card(straight_sorted_ranks: Tuple[int, ...]) -> int:
+        last_rank = straight_sorted_ranks[-1]
+        if last_rank == FaceRank.ACE and straight_sorted_ranks[-2] == 5:
+            return 5
+        return last_rank
+
+    def _showdown_straight_result(self, other: "Hand") -> ShowdownResult:
+        mine = Hand._straight_highest_card(self._sorted_card_ranks)
+        theirs = Hand._straight_highest_card(other._sorted_card_ranks)
+        if mine > theirs:
+            return ShowdownResult.WIN
+        elif mine < theirs:
+            return ShowdownResult.LOSS
+        return ShowdownResult.TIE
