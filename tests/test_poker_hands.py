@@ -1,6 +1,6 @@
 import pytest
 
-from poker_hands import Card, Suit, FaceRank, parse_card, Hand, parse_hand, HandRank
+from poker_hands import Card, Suit, FaceRank, parse_card, Hand, parse_hand, HandRank, ShowdownResult
 
 
 def test_initialize_card():
@@ -97,3 +97,24 @@ def test_hand_rank():
         for tc in tcs:
             hand = parse_hand(tc)
             assert hand.rank == rank
+
+
+def test_showdown_valid_hands():
+    # List of tuples, each with (my hand, their hand, showdown result)
+    test_cases = [
+        ('2h, 7s, Tc, Jd, Ah', '3h, 2s, ac, 5d, 4h', ShowdownResult.LOSS)
+    ]
+    for mine, theirs, result in test_cases:
+        my_hand, their_hand = parse_hand(mine), parse_hand(theirs)
+        assert my_hand.showdown_result(their_hand) == result
+
+
+def test_showdown_invalid_hands():
+    # Invalid cases: The two hands share some of the same cards
+    test_cases = [
+        ('2h, 7s, Tc, Jd, Ah', '3h, 2s, ah, 5d, 4h')
+    ]
+    for mine, theirs in test_cases:
+        my_hand, their_hand = parse_hand(mine), parse_hand(theirs)
+        with pytest.raises(ValueError):
+            my_hand.showdown_result(their_hand)
