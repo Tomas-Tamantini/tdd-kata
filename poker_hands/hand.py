@@ -73,6 +73,11 @@ class Hand:
             return ShowdownResult.WIN
         elif self.rank < other.rank:
             return ShowdownResult.LOSS
+        for i in reversed(range(len(self._sorted_card_ranks))):
+            if self._sorted_card_ranks[i] > other._sorted_card_ranks[i]:
+                return ShowdownResult.WIN
+            elif self._sorted_card_ranks[i] < other._sorted_card_ranks[i]:
+                return ShowdownResult.LOSS
         return ShowdownResult.TIE
 
     @staticmethod
