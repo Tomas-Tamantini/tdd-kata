@@ -110,9 +110,24 @@ def test_showdown_invalid_hands():
 def test_showdown_valid_hands():
     # List of tuples, each with (my hand, their hand, showdown result)
     test_cases = [
+        # DIFFERENT RANKS
         ('2c, 7s, Tc, Jd, Ah', '3s, 2s, ac, 5d, 4h', ShowdownResult.LOSS),
         ('3s, 2s, ac, 5d, 4h', '2c, 7s, Tc, Jd, Ah', ShowdownResult.WIN),
+        # SAME RANK
+        # High card
+        # Pair
+        # Two pairs
+        # 3 of a kind
+        # Straight
         ('3d, 2s, ac, 5d, 4h', '3c, 2d, ah, 5s, 4c', ShowdownResult.TIE),
+        ('3d, 2s, ac, 5d, 4h', '3c, 2d, 6h, 5s, 4c', ShowdownResult.LOSS),
+        # Flush
+        # Full house
+        # 4 of a kind
+        ('5h, 5s, 5c, 5d, 6h', '2h, as, ac, Ad, ah', ShowdownResult.LOSS),
+        # Straight flush
+
+
     ]
     for mine, theirs, result in test_cases:
         my_hand, their_hand = parse_hand(mine), parse_hand(theirs)
