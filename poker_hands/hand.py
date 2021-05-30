@@ -78,3 +78,7 @@ class Hand:
             if ranks[i] - ranks[i - 1] != 1:
                 return False
         return True
+
+    def __str__(self):
+        rank_str = str(self.rank).split('.')[1].replace('_', ' ')
+        return ', '.join(map(str, self.cards)) + f' - {rank_str}'
