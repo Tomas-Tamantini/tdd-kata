@@ -132,3 +132,7 @@ class Hand:
         elif mine < theirs:
             return ShowdownResult.LOSS
         return ShowdownResult.TIE
+
+    def __str__(self):
+        rank_str = str(self.rank).split('.')[1].replace('_', ' ')
+        return ', '.join(map(str, self.cards)) + f' - {rank_str}'
