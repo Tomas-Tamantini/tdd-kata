@@ -1,10 +1,18 @@
 from dataclasses import dataclass
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Set
+
+
+def _winning_configurations() -> List:
+    rows = [{(row, col) for col in range(3)} for row in range(3)]
+    cols = [{(row, col) for row in range(3)} for col in range(3)]
+    down_diagonal = {(i, i) for i in range(3)}
+    up_diagonal = {(2 - i, i) for i in range(3)}
+    return rows + cols + [down_diagonal, up_diagonal]
 
 
 class _TicTacToeGrid:
     @staticmethod
-    def get_positions_score(positions: List[Tuple[int, int]], reflection: bool, rotation: int) -> int:
+    def get_positions_score(positions: Set[Tuple[int, int]], reflection: bool, rotation: int) -> int:
         score = 0
         for i, j in positions:
             new_i, new_j = _TicTacToeGrid.__get_transformed_coordinates(i, j, reflection, rotation)
@@ -31,10 +39,12 @@ class _TicTacToeGrid:
 
 @dataclass
 class TicTacToe:
-    def __init__(self, naughts: Optional[List[Tuple[int, int]]] = None,
-                 crosses: Optional[List[Tuple[int, int]]] = None, is_cross_turn: bool = True):
-        self.__naughts = naughts if naughts else []
-        self.__crosses = crosses if crosses else []
+    __winning_configurations = _winning_configurations()
+
+    def __init__(self, naughts: Optional[Set[Tuple[int, int]]] = None,
+                 crosses: Optional[Set[Tuple[int, int]]] = None, is_cross_turn: bool = True):
+        self.__naughts = naughts if naughts else set()
+        self.__crosses = crosses if crosses else set()
         self.__index = self.__get_index()
         self.__is_cross_turn = is_cross_turn
 
@@ -42,22 +52,58 @@ class TicTacToe:
     def num_empty_cells(self) -> int:
         return 9 - len(self.__naughts) - len(self.__crosses)
 
+    @property
+    def __empty_cells(self) -> List[Tuple[int, int]]:
+        cells = []
+        for i in range(3):
+            for j in range(3):
+                if (i, j) not in self.__naughts and (i, j) not in self.__crosses:
+                    cells.append((i, j))
+        return cells
+
+    @property
+    def is_over(self) -> bool:
+        if self.num_empty_cells == 0:
+            return True
+        for winning_config in TicTacToe.__winning_configurations:
+            if winning_config.issubset(self.__naughts) or winning_config.issubset(self.__crosses):
+                return True
+
+        return False
+
     def __hash__(self):
         return self.__index
 
     def __eq__(self, other: "TicTacToe"):
         return self.__index == other.__index
 
-    def play(self, row, col):
+    def play(self, row: int, col: int) -> "TicTacToe":
         naughts = self.__naughts.copy()
         crosses = self.__crosses.copy()
         if self.__is_cross_turn:
-            crosses.append((row, col))
+            crosses.add((row, col))
         else:
-            naughts.append((row, col))
+            naughts.add((row, col))
         return TicTacToe(naughts, crosses, not self.__is_cross_turn)
 
-    def __get_index(self):
+    @property
+    def children(self) -> Set["TicTacToe"]:
+        if self.is_over:
+            return set()
+        c = set()
+        for cell in self.__empty_cells:
+            naughts = self.__naughts.copy()
+            crosses = self.__crosses.copy()
+            if self.__is_cross_turn:
+                crosses.add(cell)
+            else:
+                naughts.add(cell)
+            child = TicTacToe(naughts, crosses, not self.__is_cross_turn)
+
+            c.add(child)
+        return c
+
+    def __get_index(self) -> int:
         max_score = 0
         for reflection in (False, True):
             for rotation in (0, 90, 180, 270):
@@ -66,3 +112,11 @@ class TicTacToe:
                 if score > max_score:
                     max_score = score
         return max_score
+
+    def __str__(self):
+        cells = [['*' for _ in range(3)] for _ in range(3)]
+        for i, j in self.__crosses:
+            cells[i][j] = 'X'
+        for i, j in self.__naughts:
+            cells[i][j] = 'O'
+        return '\n'.join(''.join(cells[i][j] for j in range(3)) for i in range(3))
