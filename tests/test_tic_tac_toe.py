@@ -38,3 +38,11 @@ def test_hash_should_be_the_same_after_rotation_and_reflection():
     expected_hash = 18630  # hash(tr90) = XXO|OX*|*** = 2 * 3^8 + 2 * 3^7 + 1 * 3^6 + 1 * 3^5 + 2 * 3^4
     assert hash(t) == hash(t90) == hash(t180) == hash(t270) == hash(tr) == hash(tr90) == hash(tr180) == hash(
         tr270) == expected_hash
+
+
+def test_play():
+    t = TicTacToe()
+    t = t.play(0, 1)
+    t = t.play(1, 2)
+    t = t.play(2, 2)
+    assert t == TicTacToe(naughts=[(1, 2)], crosses=[(0, 1), (2, 2)])
