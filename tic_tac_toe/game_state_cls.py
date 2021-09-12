@@ -32,10 +32,11 @@ class _TicTacToeGrid:
 @dataclass
 class TicTacToe:
     def __init__(self, naughts: Optional[List[Tuple[int, int]]] = None,
-                 crosses: Optional[List[Tuple[int, int]]] = None):
+                 crosses: Optional[List[Tuple[int, int]]] = None, is_cross_turn: bool = True):
         self.__naughts = naughts if naughts else []
         self.__crosses = crosses if crosses else []
         self.__index = self.__get_index()
+        self.__is_cross_turn = is_cross_turn
 
     @property
     def num_empty_cells(self) -> int:
@@ -43,6 +44,18 @@ class TicTacToe:
 
     def __hash__(self):
         return self.__index
+
+    def __eq__(self, other: "TicTacToe"):
+        return self.__index == other.__index
+
+    def play(self, row, col):
+        naughts = self.__naughts.copy()
+        crosses = self.__crosses.copy()
+        if self.__is_cross_turn:
+            crosses.append((row, col))
+        else:
+            naughts.append((row, col))
+        return TicTacToe(naughts, crosses, not self.__is_cross_turn)
 
     def __get_index(self):
         max_score = 0
