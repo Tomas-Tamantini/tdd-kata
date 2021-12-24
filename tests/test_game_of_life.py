@@ -19,7 +19,8 @@ def test_can_setup_world_with_live_cells():
 
 
 def test_dead_world_stays_dead():
-    second_gen = get_next_gen()
+    dead_world = World()
+    second_gen = dead_world.next_generation()
     assert second_gen.num_live_cells == 0
 
 
@@ -46,3 +47,8 @@ def test_cell_with_three_neighbors_survives():
 def test_dead_cell_with_three_neighbors_comes_to_life():
     second_gen = get_next_gen({(1, 1), (1, 2), (1, 3)})
     assert (2, 2) in second_gen.live_cells
+
+
+def test_glider():
+    second_gen = get_next_gen({(1, 2), (2, 3), (3, 1), (3, 2), (3, 3)})
+    assert second_gen.live_cells == {(2, 1), (2, 3), (3, 2), (3, 3), (4, 2)}
