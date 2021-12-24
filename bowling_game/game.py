@@ -23,15 +23,14 @@ class _Frame:
         return sum(self.__rolls)
 
     def num_standing_pins(self) -> int:
-        if not self.__is_tenth_frame:
-            return 10 - self.score
+        n = 10 - self.score
         if self.is_strike:
             if len(self.__rolls) > 1 and self.__rolls[1] == 10:
-                return 30 - self.score
-            return 20 - self.score
+                return n + 20
+            return n + 10
         if self.is_spare:
-            return 20 - self.score
-        return 10 - self.score
+            return n + 10
+        return n
 
     @property
     def is_strike(self) -> bool:
