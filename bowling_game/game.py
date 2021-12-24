@@ -41,10 +41,16 @@ class _Frame:
             return False
         return self.__rolls[0] + self.__rolls[1] == 10
 
-    def is_over(self) -> bool:
+    def is_over(self, is_tenth_frame: bool = False) -> bool:
         if len(self.__rolls) == 0:
             return False
-        return len(self.__rolls) == 2 or self.__rolls[0] == 10
+        if not is_tenth_frame:
+            return len(self.__rolls) == 2 or self.__rolls[0] == 10
+        if len(self.__rolls) < 2:
+            return False
+        if len(self.__rolls) == 3:
+            return True
+        return self.__rolls[0] + self.__rolls[1] < 10
 
 
 class BowlingGame:
@@ -65,6 +71,8 @@ class BowlingGame:
 
     def roll(self, pins: int) -> None:
         frame = self.__current_frame()
+        if len(self.__frames) == 10 and frame.is_over(True):
+            raise ValueError("Game is over")
         frame.add_roll(pins)
 
     def score(self) -> int:
