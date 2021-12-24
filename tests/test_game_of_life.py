@@ -41,3 +41,8 @@ def test_cell_with_two_neighbors_survives():
 def test_cell_with_three_neighbors_survives():
     second_gen = get_next_gen({(1, 1), (2, 2), (2, 1), (1, 2)})
     assert (2, 2) in second_gen.live_cells
+
+
+def test_dead_cell_with_three_neighbors_comes_to_life():
+    second_gen = get_next_gen({(1, 1), (1, 2), (1, 3)})
+    assert (2, 2) in second_gen.live_cells

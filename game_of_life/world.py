@@ -1,4 +1,4 @@
-from typing import List, Optional, Set, Tuple
+from typing import Optional, Set, Tuple
 
 
 class World:
@@ -16,34 +16,24 @@ class World:
 
     def next_generation(self) -> 'World':
         next_gen = set()
-        for x, y in self.__live_cells:
-            cell = Cell(x, y)
-            for n in cell.neighbor_coordinates():
+        num_neighbors_dead_cells = dict()
+        for coords in self.__live_cells:
+            num_alive_neighbors = 0
+            for n in _neighboring_coordinates(*coords):
                 if n in self.__live_cells:
-                    cell.increment_num_live_neighbors()
-            if 2 <= cell.num_live_neighbors <= 3:
-                next_gen.add((x, y))
+                    num_alive_neighbors += 1
+                elif n not in num_neighbors_dead_cells:
+                    num_neighbors_dead_cells[n] = 1
+                else:
+                    num_neighbors_dead_cells[n] += 1
+            if 2 <= num_alive_neighbors <= 3:
+                next_gen.add(coords)
+        for cell_coord, num_neighbors in num_neighbors_dead_cells.items():
+            if num_neighbors == 3:
+                next_gen.add(cell_coord)
         return World(next_gen)
 
 
-class Cell:
-    def __init__(self, x: int, y: int) -> None:
-        self.__x = x
-        self.__y = y
-        self.__num_live_neighbors = 0
-
-    def increment_num_live_neighbors(self) -> None:
-        self.__num_live_neighbors += 1
-
-    @property
-    def num_live_neighbors(self) -> int:
-        return self.__num_live_neighbors
-
-    def neighbor_coordinates(self) -> List[Tuple[int, int]]:
-        coords = []
-        for dx in range(-1, 2):
-            for dy in range(-1, 2):
-                if dx == 0 and dy == 0:
-                    continue
-                coords.append((self.__x + dx, self.__y + dy))
-        return coords
+def _neighboring_coordinates(x, y) -> Set[Tuple[int, int]]:
+    return {(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)
+            if not (dx == 0 and dy == 0)}
