@@ -24,5 +24,20 @@ def test_dead_world_stays_dead():
 
 
 def test_death_by_underpopulation():
-    second_gen = get_next_gen({(1, 1)})
+    second_gen = get_next_gen({(1, 1), (1, 2)})
     assert second_gen.num_live_cells == 0
+
+
+def test_death_by_overpopulation():
+    second_gen = get_next_gen({(1, 1), (2, 2), (3, 3), (2, 1), (1, 3)})
+    assert (2, 2) not in second_gen.live_cells
+
+
+def test_cell_with_two_neighbors_survives():
+    second_gen = get_next_gen({(1, 1), (2, 2), (2, 1)})
+    assert (2, 2) in second_gen.live_cells
+
+
+def test_cell_with_three_neighbors_survives():
+    second_gen = get_next_gen({(1, 1), (2, 2), (2, 1), (1, 2)})
+    assert (2, 2) in second_gen.live_cells
