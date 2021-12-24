@@ -56,3 +56,11 @@ def test_can_score_perfect_game():
     game = BowlingGame()
     roll_many(game, 10, 12)
     assert game.score() == 300
+
+
+def test_cannot_play_more_than_10_frames():
+    game = BowlingGame()
+    roll_many(game, 10, 9)
+    roll_many(game, 4, 2)
+    with pytest.raises(ValueError):
+        game.roll(0)
