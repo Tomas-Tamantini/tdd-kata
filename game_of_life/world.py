@@ -26,11 +26,15 @@ class World:
                     num_neighbors_dead_cells[n] = 1
                 else:
                     num_neighbors_dead_cells[n] += 1
+            # If a live cell has 2 or 3 neighbors, it survives.
             if 2 <= num_alive_neighbors <= 3:
                 next_gen.add(coords)
+
+        # Any dead cell with exactly three live neighbors becomes a live cell
         for cell_coord, num_neighbors in num_neighbors_dead_cells.items():
             if num_neighbors == 3:
                 next_gen.add(cell_coord)
+
         return World(next_gen)
 
 
