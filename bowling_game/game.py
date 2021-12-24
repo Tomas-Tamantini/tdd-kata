@@ -8,7 +8,7 @@ class _Frame:
         self.__rolls = []
 
     def add_roll(self, pins: int) -> None:
-        if self.__is_tenth_frame and self.is_over():
+        if self.__is_tenth_frame and self.is_over:
             raise ValueError("Game is already over")
         if pins < 0 or pins > self.num_standing_pins():
             raise ValueError("Invalid number of pins")
@@ -42,6 +42,7 @@ class _Frame:
             return False
         return self.__rolls[0] + self.__rolls[1] == 10
 
+    @property
     def is_over(self) -> bool:
         if len(self.__rolls) == 0:
             return False
@@ -57,7 +58,7 @@ class BowlingGame:
         self.__frames = []
 
     def __current_frame(self) -> _Frame:
-        if len(self.__frames) == 0 or (len(self.__frames) < 10 and self.__frames[-1].is_over()):
+        if len(self.__frames) == 0 or (len(self.__frames) < 10 and self.__frames[-1].is_over):
             is_tenth_frame = len(self.__frames) == 9
             self.__frames.append(_Frame(is_tenth_frame))
         return self.__frames[-1]
