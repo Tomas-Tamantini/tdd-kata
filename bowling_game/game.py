@@ -3,11 +3,14 @@ from typing import List
 
 
 class _Frame:
-    def __init__(self):
+    def __init__(self, is_tenth_frame: bool = False):
+        self.__is_tenth_frame = is_tenth_frame
         self.__rolls = []
 
     def add_roll(self, pins: int) -> None:
-        if pins < 0 or pins > self.num_standing_pins:
+        if self.__is_tenth_frame and self.is_over():
+            raise ValueError("Game is already over")
+        if pins < 0 or pins > self.num_standing_pins():
             raise ValueError("Invalid number of pins")
         self.__rolls.append(pins)
 
@@ -19,13 +22,12 @@ class _Frame:
     def score(self) -> int:
         return sum(self.__rolls)
 
-    @property
     def num_standing_pins(self) -> int:
-        if len(self.__rolls) == 0:
-            return 10
+        if not self.__is_tenth_frame:
+            return 10 - self.score
         if self.is_strike:
             if len(self.__rolls) > 1 and self.__rolls[1] == 10:
-                return 10
+                return 30 - self.score
             return 20 - self.score
         if self.is_spare:
             return 20 - self.score
@@ -41,16 +43,14 @@ class _Frame:
             return False
         return self.__rolls[0] + self.__rolls[1] == 10
 
-    def is_over(self, is_tenth_frame: bool = False) -> bool:
+    def is_over(self) -> bool:
         if len(self.__rolls) == 0:
             return False
-        if not is_tenth_frame:
+        if not self.__is_tenth_frame:
             return len(self.__rolls) == 2 or self.__rolls[0] == 10
-        if len(self.__rolls) < 2:
-            return False
-        if len(self.__rolls) == 3:
-            return True
-        return self.__rolls[0] + self.__rolls[1] < 10
+        if len(self.__rolls) == 2:
+            return self.__rolls[0] + self.__rolls[1] < 10
+        return len(self.__rolls) == 3
 
 
 class BowlingGame:
@@ -59,7 +59,8 @@ class BowlingGame:
 
     def __current_frame(self) -> _Frame:
         if len(self.__frames) == 0 or (len(self.__frames) < 10 and self.__frames[-1].is_over()):
-            self.__frames.append(_Frame())
+            is_tenth_frame = len(self.__frames) == 9
+            self.__frames.append(_Frame(is_tenth_frame))
         return self.__frames[-1]
 
     def __subsequent_rolls(self, frame: _Frame) -> List[int]:
@@ -71,8 +72,6 @@ class BowlingGame:
 
     def roll(self, pins: int) -> None:
         frame = self.__current_frame()
-        if len(self.__frames) == 10 and frame.is_over(True):
-            raise ValueError("Game is over")
         frame.add_roll(pins)
 
     def score(self) -> int:
