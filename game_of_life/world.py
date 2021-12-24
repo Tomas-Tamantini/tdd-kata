@@ -9,3 +9,6 @@ class World:
     @property
     def num_live_cells(self) -> int:
         return len(self.__live_cells)
+
+    def next_generation(self) -> 'World':
+        return World()
