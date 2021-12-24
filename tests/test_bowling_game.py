@@ -41,3 +41,18 @@ def test_can_score_spare():
     game.roll(3)
     roll_many(game, 0, 17)
     assert game.score() == 16
+
+
+def test_can_score_strike():
+    game = BowlingGame()
+    game.roll(10)
+    game.roll(3)
+    game.roll(4)
+    roll_many(game, 0, 16)
+    assert game.score() == 24
+
+
+def test_can_score_perfect_game():
+    game = BowlingGame()
+    roll_many(game, 10, 12)
+    assert game.score() == 300
