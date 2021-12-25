@@ -1,7 +1,8 @@
-from langton import Langton
+from langton import Langton, Color
 
 
 def test_ant_turns_white_tile_to_black():
-    first_gen = Langton(ant=(0, 0))
-    second_gen = first_gen.next_generation()
-    assert (0, 0) in second_gen.black_tiles
+    langton = Langton(ant=(0, 0))
+    assert (0, 0) not in langton.tiles(Color.BLACK)
+    langton.tick()
+    assert (0, 0) in langton.tiles(Color.BLACK)
