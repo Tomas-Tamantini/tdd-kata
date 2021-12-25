@@ -23,14 +23,19 @@ class Langton:
         return self.__ant.direction
 
     def tick(self) -> None:
-        p = self.__ant.position
-        current_color = self.get_color(*p)
-        next_color = Color.get_next(current_color, self.__num_colors)
+        current_color = self.get_color(*self.__ant.position)
+        self.__cycle_color(current_color)
+        if current_color == Color.WHITE:
+            self.__ant.turn(right=True)
+        elif current_color == Color.BLACK:
+            self.__ant.turn(right=False)
 
+    def __cycle_color(self, current_color):
+        next_color = Color.get_next(current_color, self.__num_colors)
         if current_color in self.__tiles:
-            self.__tiles[current_color].remove(p)
+            self.__tiles[current_color].remove(self.__ant.position)
         if next_color in self.__tiles:
-            self.__tiles[next_color].add(p)
+            self.__tiles[next_color].add(self.__ant.position)
 
     def get_color(self, x: int, y: int) -> Color:
         for c in Color:
