@@ -22,6 +22,10 @@ class Langton:
     def ant_direction(self) -> Direction:
         return self.__ant.direction
 
+    @property
+    def ant_position(self) -> Tuple[int, int]:
+        return self.__ant.position
+
     def tick(self) -> None:
         current_color = self.get_color(*self.__ant.position)
         self.__cycle_color(current_color)
@@ -29,6 +33,7 @@ class Langton:
             self.__ant.turn(right=True)
         elif current_color == Color.BLACK:
             self.__ant.turn(right=False)
+        self.__ant.move_forward()
 
     def __cycle_color(self, current_color):
         next_color = Color.get_next(current_color, self.__num_colors)
