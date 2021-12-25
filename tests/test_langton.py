@@ -1,4 +1,5 @@
-from langton import Langton, Color, Direction
+import pytest
+from langton import Color, Direction, Langton
 
 
 def test_ant_turns_white_tile_to_black():
@@ -48,3 +49,15 @@ def test_ant_does_not_turn_on_red_tile():
     assert langton.ant_direction == Direction.EAST
     langton.tick()
     assert langton.ant_direction == Direction.EAST
+
+
+@pytest.mark.parametrize('color, expected_pos', [
+    (Color.WHITE, (0, -1)),
+    (Color.BLACK, (0, 1)),
+    (Color.RED, (1, 0)),
+])
+def test_and_moves_forward_one_square(color, expected_pos):
+    langton = Langton(num_colors=3, tiles={color: {(0, 0)}})
+    assert langton.ant_position == (0, 0)
+    langton.tick()
+    assert langton.ant_position == expected_pos
