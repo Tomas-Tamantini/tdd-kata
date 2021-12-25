@@ -6,12 +6,20 @@ from langton.colors import Color
 
 class Langton:
     def __init__(self, ant: Tuple[int, int] = (0, 0), num_colors: int = 2, tiles: Optional[Dict[Color, Set[Tuple[int, int]]]] = None):
+        if num_colors < 2 or num_colors > 3:
+            raise ValueError("Invalid number of colors")
+        self.__num_colors = num_colors
         self.__ant = ant
-        self.__tiles = {c: set() for c in Color if c !=
-                        Color.WHITE} if tiles is None else tiles
+        self.__tiles = dict()
+        for c in Color:
+            if c == Color.WHITE:
+                continue
+            self.__tiles[c] = set() if tiles is None else tiles.get(c, set())
 
     def tick(self) -> None:
         colors = [Color.WHITE, Color.BLACK]
+        if self.__num_colors == 3:
+            colors.append(Color.RED)
         for i, c in enumerate(colors):
             if c not in self.__tiles or self.__ant not in self.__tiles[c]:
                 continue

@@ -13,3 +13,10 @@ def test_ant_turns_black_tile_to_white_when_two_colors():
     assert langton.get_color(0, 0) == Color.BLACK
     langton.tick()
     assert langton.get_color(0, 0) == Color.WHITE
+
+
+def test_ant_turns_black_tile_to_red_when_three_colors():
+    langton = Langton(ant=(0, 0), num_colors=3, tiles={Color.BLACK: {(0, 0)}})
+    assert langton.get_color(0, 0) == Color.BLACK
+    langton.tick()
+    assert langton.get_color(0, 0) == Color.RED
