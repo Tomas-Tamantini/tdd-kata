@@ -1,5 +1,6 @@
 import pytest
 from langton import Color, Direction, Langton
+from langton.ant import Ant
 
 
 def test_ant_turns_white_tile_to_black():
@@ -61,3 +62,15 @@ def test_and_moves_forward_one_square(color, expected_pos):
     assert langton.ant_position == (0, 0)
     langton.tick()
     assert langton.ant_position == expected_pos
+
+
+def test_multiple_ticks():
+    ant = Ant(10, 10, Direction.WEST)
+    langton = Langton(ant, tiles={Color.BLACK: {(100, 100)}})
+    for _ in range(10):
+        langton.tick()
+    assert langton.tiles(Color.BLACK) == {
+        (9, 9), (9, 10), (11, 10),
+        (10, 11), (10, 10), (11, 11),
+        (100, 100)
+    }

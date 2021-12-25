@@ -47,3 +47,8 @@ class Langton:
             if (x, y) in self.__tiles.get(c, set()):
                 return c
         return Color.WHITE
+
+    def tiles(self, color: Color = Color.BLACK) -> Set[Tuple[int, int]]:
+        if color == Color.WHITE:
+            raise ValueError("White tiles are not stored")
+        return self.__tiles.get(color, set())
