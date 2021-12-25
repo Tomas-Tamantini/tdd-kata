@@ -15,3 +15,6 @@ class Ant:
     @property
     def direction(self) -> Direction:
         return self.__direction
+
+    def turn(self, right: bool):
+        self.__direction = Direction.get_next(self.__direction, right)
