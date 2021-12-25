@@ -3,6 +3,7 @@ from typing import Optional, Set, Tuple, Dict
 
 from langton.colors import Color
 from langton.ant import Ant
+from langton.directions import Direction
 
 
 class Langton:
@@ -16,6 +17,10 @@ class Langton:
             if c == Color.WHITE:
                 continue
             self.__tiles[c] = set() if tiles is None else tiles.get(c, set())
+
+    @property
+    def ant_direction(self) -> Direction:
+        return self.__ant.direction
 
     def tick(self) -> None:
         colors = [Color.WHITE, Color.BLACK]
