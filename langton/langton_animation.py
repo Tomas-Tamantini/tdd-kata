@@ -3,19 +3,30 @@ from langton import Langton, Color, Direction
 
 WIDTH = 500
 HEIGHT = 500
-TILE_SIZE = 20
+TILE_SIZE = 12
 
 
-def run_langton_animation(num_iterations: int = 10000):
+def _setup_initial_grid(num_colors: int) -> Langton:
+    if num_colors == 2:
+        return Langton()
+    elif num_colors == 3:
+        return Langton(num_colors=3, tiles={
+            Color.BLACK: {(0, 0), (5, 0), (-5, 0), (0, 15)},
+            Color.RED: {(0, 5), (0, -5)}
+        })
+    raise ValueError('num_colors must be 2 or 3')
+
+
+def run_langton_animation(num_colors: int = 3, num_iterations: int = 10000, frame_ms=100):
     root = Tk()
     canvas = Canvas(root, width=WIDTH, height=HEIGHT)
-    langton = Langton(num_colors=2)
+    langton = _setup_initial_grid(num_colors)
     for _ in range(num_iterations):
         canvas.delete('all')
         _draw_world(canvas, langton)
         canvas.pack()
         root.update()
-        root.after(1000)
+        root.after(frame_ms)
         langton.tick()
     root.mainloop()
 
@@ -45,18 +56,19 @@ def _draw_ant(canvas: Canvas, langton: Langton):
     y0_body = -y * TILE_SIZE + (HEIGHT + TILE_SIZE - body_size) // 2
     x0_head = x * TILE_SIZE + (WIDTH + TILE_SIZE - head_size) // 2
     y0_head = -y * TILE_SIZE + (HEIGHT + TILE_SIZE - head_size) // 2
+    dir_offset = body_size // 3
     if langton.ant_direction == Direction.EAST:
-        x0_body -= body_size // 3
-        x0_head += body_size // 3
+        x0_body -= dir_offset
+        x0_head += dir_offset
     elif langton.ant_direction == Direction.WEST:
-        x0_body += body_size // 3
-        x0_head -= body_size // 3
+        x0_body += dir_offset
+        x0_head -= dir_offset
     elif langton.ant_direction == Direction.NORTH:
-        y0_body += body_size // 3
-        y0_head -= body_size // 3
+        y0_body += dir_offset
+        y0_head -= dir_offset
     elif langton.ant_direction == Direction.SOUTH:
-        y0_body -= body_size // 3
-        y0_head += body_size // 3
+        y0_body -= dir_offset
+        y0_head += dir_offset
 
     x1_body = x0_body + body_size
     y1_body = y0_body + body_size
