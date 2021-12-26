@@ -1,5 +1,6 @@
 from tkinter import *
 from langton import Langton, Color, Direction
+from utils import run_animation
 
 WIDTH = 500
 HEIGHT = 500
@@ -18,17 +19,12 @@ def _setup_initial_grid(num_colors: int) -> Langton:
 
 
 def run_langton_animation(num_colors: int = 3, num_iterations: int = 10000, frame_ms=100):
-    root = Tk()
-    canvas = Canvas(root, width=WIDTH, height=HEIGHT)
     langton = _setup_initial_grid(num_colors)
-    for _ in range(num_iterations):
-        canvas.delete('all')
+
+    def callback_on_frame(canvas: Canvas):
         _draw_world(canvas, langton)
-        canvas.pack()
-        root.update()
-        root.after(frame_ms)
         langton.tick()
-    root.mainloop()
+    run_animation(callback_on_frame, WIDTH, HEIGHT, num_iterations, frame_ms)
 
 
 def _draw_world(canvas: Canvas, langton: Langton):
