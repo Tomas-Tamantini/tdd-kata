@@ -3,7 +3,7 @@ from langton import Langton, Color, Direction
 from utils import run_animation, Grid
 
 
-class LangtonAnimator:
+class _LangtonAnimator:
     def __init__(self, num_colors: int) -> None:
         self.__grid = Grid(50, 40)  # 50 x 40 cells
         self.__langton = self.__setup_initial_state(num_colors)
@@ -75,6 +75,6 @@ class LangtonAnimator:
 
 
 def run_langton_animation(num_colors: int = 3, num_iterations: int = 10000, frame_ms=100):
-    langton_animator = LangtonAnimator(num_colors)
+    langton_animator = _LangtonAnimator(num_colors)
     run_animation(langton_animator.draw_world, langton_animator.width,
                   langton_animator.height, num_iterations, frame_ms)
