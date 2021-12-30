@@ -1,4 +1,6 @@
-# TODO: Refactor the code to allow HTML statements to be generated.
+def _wrapElement(text: str, tag: str) -> str:
+    return f"<{tag}>{text}</{tag}>"
+
 
 class Customer:
     def __init__(self, name):
@@ -8,45 +10,49 @@ class Customer:
     def getName(self):
         return self.name
 
-    def statement(self):
-        totalAmount = 0
-        frequentRenterPoints = 0
-        result = "Rental Record for " + self.getName() + "\n"
+    @property
+    def totalAmount(self) -> float:
+        return float(sum([r.amount for r in self._rentals]))
 
-        for each in self._rentals:
-            thisAmount = 0.0
-
-            # determine amounts for each line
-            if each.getMovie().getPriceCode() == Movie.REGULAR:
-                thisAmount += 2
-                if each.getDaysRented() > 2:
-                    thisAmount += (each.getDaysRented() - 2) * 1.5
-            elif each.getMovie().getPriceCode() == Movie.NEW_RELEASE:
-                thisAmount += each.getDaysRented() * 3
-            elif each.getMovie().getPriceCode() == Movie.CHILDRENS:
-                thisAmount += 1.5
-                if each.getDaysRented() > 3:
-                    thisAmount += (each.getDaysRented() - 3) * 1.5
-
-            # add frequent renter points
-            frequentRenterPoints += 1
-            # add bonus for a two day new release rental
-            if (each.getMovie().getPriceCode() == Movie.NEW_RELEASE) and each.getDaysRented() > 1:
-                frequentRenterPoints += 1
-
-            # show figures for this rental
-            result += "\t" + each.getMovie().getTitle() + "\t" + str(thisAmount) + "\n"
-            totalAmount += thisAmount
-
-        # add footer lines
-        result += "Amount owed is " + str(totalAmount) + "\n"
-        result += "You earned " + \
-            str(frequentRenterPoints) + " frequent renter points"
-
-        return result
+    @property
+    def frequentRenterPoints(self) -> int:
+        return sum([r.frequentRenterPoints for r in self._rentals])
 
     def addRental(self, param):
         self._rentals.append(param)
+
+    def statement(self, htmlFormat: bool = False):
+        result = self._getHeader(htmlFormat)
+        result += self._getRentalListStr(htmlFormat)
+        result += self._getFooter(htmlFormat)
+        return result
+
+    def _getHeader(self, htmlFormat: bool):
+        name = self.getName() if not htmlFormat else _wrapElement(self.getName(), 'em')
+        header = f"Rental Record for {name}"
+        if htmlFormat:
+            header = _wrapElement(header, 'h1')
+        return header + '\n'
+
+    def _getRentalListStr(self, htmlFormat: bool) -> str:
+        strList = ['\t' + r.toStr(htmlFormat) + '\n' for r in self._rentals]
+        result = ''.join(strList)
+        if not htmlFormat:
+            return result
+        return _wrapElement('\n' + result, 'table') + '\n'
+
+    def _getFooter(self, htmlFormat: bool) -> str:
+        amt = str(self.totalAmount)
+        frp = str(self.frequentRenterPoints)
+        if htmlFormat:
+            amt = _wrapElement(amt, 'em')
+            frp = _wrapElement(frp, 'em')
+        amtMsg = f"Amount owed is {amt}"
+        frpMsg = f"You earned {frp} frequent renter points"
+        if htmlFormat:
+            amtMsg = _wrapElement(amtMsg, 'p')
+            frpMsg = _wrapElement(frpMsg, 'p')
+        return f"{amtMsg}\n{frpMsg}"
 
 
 class Movie:
@@ -67,6 +73,21 @@ class Movie:
     def getTitle(self):
         return self.title
 
+    def getPrice(self, daysRented: int) -> float:
+        if self.priceCode == Movie.REGULAR:
+            price = 2
+            if daysRented > 2:
+                price += (daysRented - 2) * 1.5
+        elif self.priceCode == Movie.NEW_RELEASE:
+            price = daysRented * 3
+        elif self.priceCode == Movie.CHILDRENS:
+            price = 1.5
+            if daysRented > 3:
+                price += (daysRented - 3) * 1.5
+        else:
+            raise ValueError('Invalid price code')
+        return float(price)
+
 
 class Rental:
     def __init__(self, movie, daysRented):
@@ -78,3 +99,22 @@ class Rental:
 
     def getMovie(self):
         return self.movie
+
+    @property
+    def _getsFrequentRenterBonus(self) -> bool:
+        return (self.getMovie().getPriceCode() == Movie.NEW_RELEASE) and self.getDaysRented() > 1
+
+    @property
+    def frequentRenterPoints(self) -> int:
+        return 2 if self._getsFrequentRenterBonus else 1
+
+    @property
+    def amount(self) -> float:
+        return self.getMovie().getPrice(self.getDaysRented())
+
+    def toStr(self, htmlFormat: bool = False):
+        if not htmlFormat:
+            return self.getMovie().getTitle() + "\t" + str(self.amount)
+        title = _wrapElement(self.getMovie().getTitle(), 'td')
+        amount = _wrapElement(str(self.amount), 'td')
+        return _wrapElement(title + amount, 'tr')
