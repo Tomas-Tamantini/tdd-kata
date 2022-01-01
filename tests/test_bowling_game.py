@@ -1,5 +1,5 @@
 import pytest
-from bowling_game import BowlingGame, game
+from bowling_game import BowlingGame
 
 
 def roll_many(game: BowlingGame, pins: int, times: int = 20) -> None:
@@ -8,7 +8,7 @@ def roll_many(game: BowlingGame, pins: int, times: int = 20) -> None:
 
 
 @pytest.mark.parametrize("bad_roll", [11, -1])
-def test_cannot_roll_invalid_number_of_pins(bad_roll):
+def test_cannot_roll_invalid_number_of_pins(bad_roll: int):
     game = BowlingGame()
     with pytest.raises(ValueError):
         game.roll(bad_roll)
