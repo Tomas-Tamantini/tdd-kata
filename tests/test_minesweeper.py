@@ -23,3 +23,9 @@ def test_cannot_place_bombs_outside_grid():
     sweeper = MineSweeper(10, 8)
     with pytest.raises(IndexError):
         sweeper.place_bombs({(5, 8)})
+
+
+def test_can_place_bombs_in_grid():
+    sweeper = MineSweeper(10, 8)
+    sweeper.place_bombs({(5, 5), (3, 2)})
+    assert sweeper.num_bombs == 2
