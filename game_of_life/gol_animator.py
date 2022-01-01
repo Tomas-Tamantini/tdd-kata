@@ -35,7 +35,7 @@ class _GameOfLifeAnimator:
             canvas.create_rectangle(*rc, fill='black', outline='grey')
 
 
-def run_game_of_life_animation(num_iterations: int = 10000, frame_ms=100):
+def run_game_of_life_animation(num_iterations: int = 10000, frame_ms: int = 100):
     animator = _GameOfLifeAnimator()
     run_animation(animator.draw_world, animator.width,
                   animator.height, num_iterations, frame_ms)
