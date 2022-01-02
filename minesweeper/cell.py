@@ -24,3 +24,10 @@ class Cell:
 
     def increment_num_neighboring_mines(self) -> None:
         self.__num_neighboring_mines += 1
+
+    def __str__(self) -> str:
+        if self.__is_hidden:
+            return '*'
+        if self.__is_mine:
+            return 'M'
+        return str(self.__num_neighboring_mines)

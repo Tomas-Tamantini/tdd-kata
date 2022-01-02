@@ -86,3 +86,6 @@ class MineSweeper:
             self.__cells[i][j].set_as_mine()
             for ni, nj in self.__neighbors(i, j):
                 self.__cells[ni][nj].increment_num_neighboring_mines()
+
+    def __str__(self) -> str:
+        return '\n'.join([''.join([str(c) for c in row]) for row in self.__cells])
