@@ -1,30 +1,12 @@
 from typing import List, Set, Tuple
 
-
-class _Cell:
-    def __init__(self) -> None:
-        self.__is_hidden = True
-        self.__is_bomb = False
-
-    @property
-    def is_hidden(self) -> bool:
-        return self.__is_hidden
-
-    @property
-    def is_bomb(self) -> bool:
-        return self.__is_bomb
-
-    def set_as_bomb(self) -> None:
-        self.__is_bomb = True
-
-    def click(self):
-        self.__is_hidden = False
+from minesweeper.cell import Cell
 
 
 class MineSweeper:
     def __init__(self, width: int, height: int) -> None:
         self.__cells = [
-            [_Cell() for _ in range(height)]
+            [Cell() for _ in range(height)]
             for __ in range(width)]
 
     @property
@@ -39,7 +21,7 @@ class MineSweeper:
         return 0 <= i < self.width and 0 <= j < self.height
 
     @property
-    def __flat_cells(self) -> List[_Cell]:
+    def __flat_cells(self) -> List[Cell]:
         return [self.__cells[i][j]
                 for i in range(self.width)
                 for j in range(self.height)]
@@ -58,6 +40,8 @@ class MineSweeper:
         self.__cells[i][j].click()
 
     def place_bombs(self, bombs: Set[Tuple[int, int]]) -> None:
+        if self.num_bombs > 0:
+            raise OverflowError('Can only place bombs once')
         for i, j in bombs:
             if not self.__is_inside_grid(i, j):
                 raise IndexError('Cannot place bomb outside of grid')

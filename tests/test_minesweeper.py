@@ -29,3 +29,11 @@ def test_can_place_bombs_in_grid():
     sweeper = MineSweeper(10, 8)
     sweeper.place_bombs({(5, 5), (3, 2)})
     assert sweeper.num_bombs == 2
+
+
+def test_can_only_place_bombs_once():
+    sweeper = MineSweeper(10, 8)
+    sweeper.place_bombs({(5, 5), (3, 2)})
+    with pytest.raises(OverflowError):
+        sweeper.place_bombs({(0, 0)})
+
