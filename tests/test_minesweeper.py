@@ -21,31 +21,35 @@ def test_click_should_show_cell():
     assert sweeper.num_hidden_cells < 80
 
 
-def test_cannot_place_bombs_outside_grid():
+def test_cannot_place_mines_outside_grid():
     sweeper = MineSweeper(10, 8)
     with pytest.raises(IndexError):
-        sweeper.place_bombs({(5, 8)})
+        sweeper.place_mines({(5, 8)})
 
 
-def test_can_place_bombs_in_grid():
+def test_can_place_mines_in_grid():
     sweeper = MineSweeper(10, 8)
-    sweeper.place_bombs({(5, 5), (3, 2)})
-    assert sweeper.num_bombs == 2
+    sweeper.place_mines({(5, 5), (3, 2)})
+    assert sweeper.num_mines == 2
 
 
-def test_can_only_place_bombs_once():
+def test_can_only_place_mines_once():
     sweeper = MineSweeper(10, 8)
-    sweeper.place_bombs({(5, 5), (3, 2)})
+    sweeper.place_mines({(5, 5), (3, 2)})
     with pytest.raises(OverflowError):
-        sweeper.place_bombs({(0, 0)})
+        sweeper.place_mines({(0, 0)})
 
 
-def test_get_num_neighboring_bombs():
+def test_get_num_neighboring_mines():
     sweeper = MineSweeper(width=4, height=3)
-    sweeper.place_bombs({(0, 0), (1, 2), (2, 2)})
+    sweeper.place_mines({(0, 0), (1, 2), (2, 2)})
     expected_neighbors: List[List[Optional[int]]] = [
         [None for _ in range(4)] for _ in range(3)]
-    assert sweeper.num_neighboring_bombs == expected_neighbors
+    assert sweeper.num_neighboring_mines == expected_neighbors
     sweeper.click_cell(1, 1)
     expected_neighbors[1][1] = 3
-    assert sweeper.num_neighboring_bombs == expected_neighbors
+    assert sweeper.num_neighboring_mines == expected_neighbors
+
+
+def test_game_is_over_when_stepping_on_a_mine():
+    pass

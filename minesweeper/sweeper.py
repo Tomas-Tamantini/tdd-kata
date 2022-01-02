@@ -18,11 +18,11 @@ class MineSweeper:
         return len(self.__cells)
 
     @property
-    def num_neighboring_bombs(self) -> List[List[Optional[int]]]:
+    def num_neighboring_mines(self) -> List[List[Optional[int]]]:
         def get_num_neighbors(cell: Cell) -> Optional[int]:
-            if cell.is_bomb or cell.is_hidden:
+            if cell.is_mine or cell.is_hidden:
                 return None
-            return cell.num_neighboring_bombs
+            return cell.num_neighboring_mines
         return [[get_num_neighbors(cell) for cell in row] for row in self.__cells]
 
     def __is_inside_grid(self, i: int, j: int) -> bool:
@@ -39,8 +39,8 @@ class MineSweeper:
         return len([1 for c in self.__flat_cells if c.is_hidden])
 
     @property
-    def num_bombs(self) -> int:
-        return len([1 for c in self.__flat_cells if c.is_bomb])
+    def num_mines(self) -> int:
+        return len([1 for c in self.__flat_cells if c.is_mine])
 
     def click_cell(self, i: int, j: int):
         if not self.__is_inside_grid(i, j):
@@ -57,12 +57,12 @@ class MineSweeper:
                     out.append(self.__cells[i + di][j + dj])
         return out
 
-    def place_bombs(self, bombs: Set[Tuple[int, int]]) -> None:
-        if self.num_bombs > 0:
-            raise OverflowError('Can only place bombs once')
-        for i, j in bombs:
+    def place_mines(self, mines: Set[Tuple[int, int]]) -> None:
+        if self.num_mines > 0:
+            raise OverflowError('Can only place mines once')
+        for i, j in mines:
             if not self.__is_inside_grid(i, j):
-                raise IndexError('Cannot place bomb outside of grid')
-            self.__cells[i][j].set_as_bomb()
+                raise IndexError('Cannot place mine outside of grid')
+            self.__cells[i][j].set_as_mine()
             for c in self.__neighbors(i, j):
-                c.increment_num_neighboring_bombs()
+                c.increment_num_neighboring_mines()
