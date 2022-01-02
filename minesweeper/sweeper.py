@@ -49,26 +49,32 @@ class MineSweeper:
         return len([1 for c in self.__flat_cells if c.is_mine])
 
     def click_cell(self, i: int, j: int):
-        if self.__game_is_over:
-            raise ValueError('Game is over')
         if not self.__is_inside_grid(i, j):
             raise IndexError('Cannot click outside of grid')
-        self.__cells[i][j].click()
-        if self.__cells[i][j].is_mine:
+        c = self.__cells[i][j]
+        if not c.is_hidden:
+            return
+        c.click()
+        if c.is_mine:
             self.__game_is_over = True
-        else:
-            self.__num_uncovered_cells += 1
-            if self.__num_uncovered_cells + self.num_mines >= self.width * self.height:
-                self.__game_is_over = True
+            return
+        self.__num_uncovered_cells += 1
+        if self.__num_uncovered_cells + self.num_mines >= self.width * self.height:
+            self.__game_is_over = True
+            return
+        if c.num_neighboring_mines == 0:
+            for ni, nj in self.__neighbors(i, j):
+                self.click_cell(ni, nj)
 
-    def __neighbors(self, i: int, j: int) -> List[Cell]:
+    def __neighbors(self, i: int, j: int) -> List[Tuple[int, int]]:
         out = []
         for di in range(-1, 2):
             for dj in range(-1, 2):
-                if di == 0 and dj == 0:
+                ni = i + di
+                nj = j + dj
+                if di == 0 and dj == 0 or not self.__is_inside_grid(ni, nj):
                     continue
-                if self.__is_inside_grid(i + di, j + dj):
-                    out.append(self.__cells[i + di][j + dj])
+                out.append((ni, nj))
         return out
 
     def place_mines(self, mines: Set[Tuple[int, int]]) -> None:
@@ -78,5 +84,5 @@ class MineSweeper:
             if not self.__is_inside_grid(i, j):
                 raise IndexError('Cannot place mine outside of grid')
             self.__cells[i][j].set_as_mine()
-            for c in self.__neighbors(i, j):
-                c.increment_num_neighboring_mines()
+            for ni, nj in self.__neighbors(i, j):
+                self.__cells[ni][nj].increment_num_neighboring_mines()

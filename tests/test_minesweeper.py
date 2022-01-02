@@ -73,3 +73,17 @@ def test_game_is_over_when_only_mines_are_left():
     for i, j in non_mines:
         sweeper.click_cell(i, j)
     assert sweeper.game_is_over
+
+
+def test_game_clicks_safe_cells_automatically():
+    sweeper = get_3x4_game()
+    sweeper.click_cell(0, 3)
+    # Since there are no neighboring mines,
+    # all neighbors are clicked, and this is done recursively
+    assert sweeper.num_hidden_cells == 6
+    expected_neighbors = [
+        [None, 1, 0, 0],
+        [None, 3, 2, 1],
+        [None, None, None, None]
+    ]
+    assert sweeper.num_neighboring_mines == expected_neighbors
