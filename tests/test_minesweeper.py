@@ -40,9 +40,14 @@ def test_can_only_place_mines_once():
         sweeper.place_mines({(0, 0)})
 
 
-def test_get_num_neighboring_mines():
-    sweeper = MineSweeper(width=4, height=3)
+def get_3x4_game() -> MineSweeper:
+    sweeper = MineSweeper(height=3, width=4)
     sweeper.place_mines({(0, 0), (1, 2), (2, 2)})
+    return sweeper
+
+
+def test_get_num_neighboring_mines():
+    sweeper = get_3x4_game()
     expected_neighbors: List[List[Optional[int]]] = [
         [None for _ in range(4)] for _ in range(3)]
     assert sweeper.num_neighboring_mines == expected_neighbors
@@ -52,4 +57,7 @@ def test_get_num_neighboring_mines():
 
 
 def test_game_is_over_when_stepping_on_a_mine():
-    pass
+    sweeper = get_3x4_game()
+    assert not sweeper.game_is_over
+    sweeper.click_cell(0, 0)
+    assert sweeper.game_is_over
