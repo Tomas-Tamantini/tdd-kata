@@ -42,7 +42,7 @@ def test_can_only_place_mines_once():
 
 def get_3x4_game() -> MineSweeper:
     sweeper = MineSweeper(height=3, width=4)
-    sweeper.place_mines({(0, 0), (1, 2), (2, 2)})
+    sweeper.place_mines({(0, 0), (2, 1), (2, 2)})
     return sweeper
 
 
@@ -59,5 +59,17 @@ def test_get_num_neighboring_mines():
 def test_game_is_over_when_stepping_on_a_mine():
     sweeper = get_3x4_game()
     assert not sweeper.game_is_over
-    sweeper.click_cell(0, 0)
+    sweeper.click_cell(2, 1)
+    assert sweeper.game_is_over
+
+
+def test_game_is_over_when_only_mines_are_left():
+    sweeper = get_3x4_game()
+    non_mines = {
+        (0, 1), (0, 2), (0, 3),
+        (1, 0), (1, 1), (1, 2), (1, 3),
+        (2, 0), (2, 3)
+    }
+    for i, j in non_mines:
+        sweeper.click_cell(i, j)
     assert sweeper.game_is_over

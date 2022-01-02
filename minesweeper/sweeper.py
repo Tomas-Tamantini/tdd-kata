@@ -5,6 +5,7 @@ from minesweeper.cell import Cell
 
 class MineSweeper:
     def __init__(self, height: int, width: int) -> None:
+        self.__num_uncovered_cells = 0
         self.__game_is_over = False
         self.__cells = [
             [Cell() for _ in range(width)]
@@ -48,11 +49,17 @@ class MineSweeper:
         return len([1 for c in self.__flat_cells if c.is_mine])
 
     def click_cell(self, i: int, j: int):
+        if self.__game_is_over:
+            raise ValueError('Game is over')
         if not self.__is_inside_grid(i, j):
             raise IndexError('Cannot click outside of grid')
         self.__cells[i][j].click()
         if self.__cells[i][j].is_mine:
             self.__game_is_over = True
+        else:
+            self.__num_uncovered_cells += 1
+            if self.__num_uncovered_cells + self.num_mines >= self.width * self.height:
+                self.__game_is_over = True
 
     def __neighbors(self, i: int, j: int) -> List[Cell]:
         out = []
