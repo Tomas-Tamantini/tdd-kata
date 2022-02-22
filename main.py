@@ -4,7 +4,7 @@ from minesweeper import run_mine_sweeper_cli
 
 # run_mine_sweeper_cli()
 # run_langton_animation()
-run_game_of_life_animation(frame_ms=25)
+run_game_of_life_animation(frame_ms=50)
 
 
 # Next ones:
